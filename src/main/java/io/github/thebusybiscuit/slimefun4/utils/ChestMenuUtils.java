@@ -26,7 +26,7 @@ public final class ChestMenuUtils {
 
     private ChestMenuUtils() {}
 
-    private static final ItemStack UI_BACKGROUND = new SlimefunItemStack("_UI_BACKGROUND", Material.GRAY_STAINED_GLASS_PANE, " ");
+    private static final ItemStack UI_BACKGROUND = new SlimefunItemStack("_UI_BACKGROUND", Material.LIME_STAINED_GLASS_PANE, " ");
     private static final ItemStack INPUT_SLOT = new SlimefunItemStack("_UI_INPUT_SLOT", Material.CYAN_STAINED_GLASS_PANE, " ");
     private static final ItemStack OUTPUT_SLOT = new SlimefunItemStack("_UI_OUTPUT_SLOT", Material.ORANGE_STAINED_GLASS_PANE, " ");
 
@@ -38,10 +38,10 @@ public final class ChestMenuUtils {
     private static final ItemStack SEARCH_BUTTON = new SlimefunItemStack("_UI_SEARCH", Material.NAME_TAG, "&bSearch");
     private static final ItemStack WIKI_BUTTON = new SlimefunItemStack("_UI_WIKI", Material.KNOWLEDGE_BOOK, "&3Slimefun Wiki");
 
-    private static final ItemStack PREV_BUTTON_ACTIVE = new SlimefunItemStack("_UI_PREVIOUS_ACTIVE", Material.LIME_STAINED_GLASS_PANE, "&r\u21E6 Previous Page");
-    private static final ItemStack NEXT_BUTTON_ACTIVE = new SlimefunItemStack("_UI_NEXT_ACTIVE", Material.LIME_STAINED_GLASS_PANE, "&rNext Page \u21E8");
-    private static final ItemStack PREV_BUTTON_INACTIVE = new SlimefunItemStack("_UI_PREVIOUS_INACTIVE", Material.BLACK_STAINED_GLASS_PANE, "&8\u21E6 Previous Page");
-    private static final ItemStack NEXT_BUTTON_INACTIVE = new SlimefunItemStack("_UI_NEXT_INACTIVE", Material.BLACK_STAINED_GLASS_PANE, "&8Next Page \u21E8");
+    private static final ItemStack PREV_BUTTON_ACTIVE = new SlimefunItemStack("_UI_PREVIOUS_ACTIVE", Material.LIGHT_BLUE_STAINED_GLASS_PANE, "&r\u21E6 Previous Page");
+    private static final ItemStack NEXT_BUTTON_ACTIVE = new SlimefunItemStack("_UI_NEXT_ACTIVE", Material.LIGHT_BLUE_STAINED_GLASS_PANE, "&rNext Page \u21E8");
+    private static final ItemStack PREV_BUTTON_INACTIVE = new SlimefunItemStack("_UI_PREVIOUS_INACTIVE", Material.LIME_STAINED_GLASS_PANE, "&8\u21E6 Previous Page");
+    private static final ItemStack NEXT_BUTTON_INACTIVE = new SlimefunItemStack("_UI_NEXT_INACTIVE", Material.LIME_STAINED_GLASS_PANE, "&8Next Page \u21E8");
 
     private static final MenuClickHandler CLICK_HANDLER = (p, s, i, a) -> false;
 
@@ -74,7 +74,8 @@ public final class ChestMenuUtils {
     }
 
     public static @Nonnull ItemStack getMenuButton(@Nonnull Player p) {
-        return new CustomItemStack(MENU_BUTTON, ChatColor.YELLOW + Slimefun.getLocalization().getMessage(p, "guide.title.settings"), "", "&7\u21E8 " + Slimefun.getLocalization().getMessage(p, "guide.tooltips.open-itemgroup"));
+//        return new CustomItemStack(MENU_BUTTON, ChatColor.YELLOW + Slimefun.getLocalization().getMessage(p, "guide.title.settings"), "", "&7\u21E8 " + Slimefun.getLocalization().getMessage(p, "guide.tooltips.open-itemgroup"));
+        return UI_BACKGROUND;
     }
 
     public static @Nonnull ItemStack getSearchButton(@Nonnull Player p) {

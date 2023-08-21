@@ -601,11 +601,11 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
         }
 
         // Settings Panel
-        menu.addItem(1, ChestMenuUtils.getMenuButton(p));
-        menu.addMenuClickHandler(1, (pl, slot, item, action) -> {
-            SlimefunGuideSettings.openSettings(pl, pl.getInventory().getItemInMainHand());
-            return false;
-        });
+//        menu.addItem(1, ChestMenuUtils.getMenuButton(p));
+//        menu.addMenuClickHandler(1, (pl, slot, item, action) -> {
+//            SlimefunGuideSettings.openSettings(pl, pl.getInventory().getItemInMainHand());
+//            return false;
+//        });
 
         // Search feature!
         menu.addItem(7, ChestMenuUtils.getSearchButton(p));
