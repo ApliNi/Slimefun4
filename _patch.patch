@@ -1,4 +1,5 @@
-Subject: [PATCH] 迁移
+Subject: [PATCH] 尝试使用自动发布
+迁移
 ---
 Index: README.md
 IDEA additional info:
@@ -6,8 +7,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/README.md b/README.md
---- a/README.md	(revision f8983a90358a280ea3130217760db42f06e96e77)
-+++ b/README.md	(revision 3df72d3c85199f1a4c45a58d4b1ee021d3a7f046)
+--- a/README.md     (revision f8983a90358a280ea3130217760db42f06e96e77)
++++ b/README.md     (revision 3df72d3c85199f1a4c45a58d4b1ee021d3a7f046)
 @@ -1,192 +1,6 @@
 -# Slimefun 中文版
 -
@@ -214,8 +215,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/src/main/java/city/norain/slimefun4/EnvironmentChecker.java b/src/main/java/city/norain/slimefun4/EnvironmentChecker.java
---- a/src/main/java/city/norain/slimefun4/EnvironmentChecker.java	(revision f8983a90358a280ea3130217760db42f06e96e77)
-+++ b/src/main/java/city/norain/slimefun4/EnvironmentChecker.java	(revision 3df72d3c85199f1a4c45a58d4b1ee021d3a7f046)
+--- a/src/main/java/city/norain/slimefun4/EnvironmentChecker.java     (revision f8983a90358a280ea3130217760db42f06e96e77)
++++ b/src/main/java/city/norain/slimefun4/EnvironmentChecker.java     (revision 3df72d3c85199f1a4c45a58d4b1ee021d3a7f046)
 @@ -8,7 +8,7 @@
  import org.bukkit.Bukkit;
  
@@ -231,8 +232,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/guide/SurvivalSlimefunGuide.java b/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/guide/SurvivalSlimefunGuide.java
---- a/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/guide/SurvivalSlimefunGuide.java	(revision f8983a90358a280ea3130217760db42f06e96e77)
-+++ b/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/guide/SurvivalSlimefunGuide.java	(revision 3df72d3c85199f1a4c45a58d4b1ee021d3a7f046)
+--- a/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/guide/SurvivalSlimefunGuide.java   (revision f8983a90358a280ea3130217760db42f06e96e77)
++++ b/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/guide/SurvivalSlimefunGuide.java   (revision 3df72d3c85199f1a4c45a58d4b1ee021d3a7f046)
 @@ -601,11 +601,11 @@
          }
  
@@ -256,8 +257,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/src/main/java/io/github/thebusybiscuit/slimefun4/utils/ChestMenuUtils.java b/src/main/java/io/github/thebusybiscuit/slimefun4/utils/ChestMenuUtils.java
---- a/src/main/java/io/github/thebusybiscuit/slimefun4/utils/ChestMenuUtils.java	(revision f8983a90358a280ea3130217760db42f06e96e77)
-+++ b/src/main/java/io/github/thebusybiscuit/slimefun4/utils/ChestMenuUtils.java	(revision 3df72d3c85199f1a4c45a58d4b1ee021d3a7f046)
+--- a/src/main/java/io/github/thebusybiscuit/slimefun4/utils/ChestMenuUtils.java     (revision f8983a90358a280ea3130217760db42f06e96e77)
++++ b/src/main/java/io/github/thebusybiscuit/slimefun4/utils/ChestMenuUtils.java     (revision 3df72d3c85199f1a4c45a58d4b1ee021d3a7f046)
 @@ -26,7 +26,7 @@
  
      private ChestMenuUtils() {}
@@ -292,3 +293,40 @@ diff --git a/src/main/java/io/github/thebusybiscuit/slimefun4/utils/ChestMenuUti
      }
  
      public static @Nonnull ItemStack getSearchButton(@Nonnull Player p) {
+Index: .github/workflows/maven.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.github/workflows/maven.yml b/.github/workflows/maven.yml
+--- a/.github/workflows/maven.yml  (revision 139a27e04dfd380ab4cfe2fa0a41f37a7da20857)
++++ b/.github/workflows/maven.yml  (revision 1b70c7780650a843bd42590ccb6960e9ceb56e1b)
+@@ -42,7 +42,7 @@
+           path: staging
+       - name: Automatic Releases
+         uses: marvinpinto/action-automatic-releases@v1.2.1
+-        if: github.event_name != 'pull_request' && github.ref_name == 'master'
++        if: github.event_name != 'pull_request' && github.ref_name == 'new'
+         with:
+           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+           automatic_release_tag: "exp"
+Index: src/main/java/net/guizhanss/slimefun4/updater/AutoUpdateTask.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/net/guizhanss/slimefun4/updater/AutoUpdateTask.java b/src/main/java/net/guizhanss/slimefun4/updater/AutoUpdateTask.java
+--- a/src/main/java/net/guizhanss/slimefun4/updater/AutoUpdateTask.java    (revision 139a27e04dfd380ab4cfe2fa0a41f37a7da20857)
++++ b/src/main/java/net/guizhanss/slimefun4/updater/AutoUpdateTask.java    (revision 1b70c7780650a843bd42590ccb6960e9ceb56e1b)
+@@ -14,9 +14,9 @@
+  */
+ public class AutoUpdateTask implements Runnable {
+ 
+-    private static final String GITHUB_USER = "StarWishsama";
++    private static final String GITHUB_USER = "ApliNi";
+     private static final String GITHUB_REPO = "Slimefun4";
+-    private static final String GITHUB_BRANCH_CANARY = "master";
++    private static final String GITHUB_BRANCH_CANARY = "new";
+     private static final String GITHUB_BRANCH_RELEASE = "release";
+ 
+     private final Plugin plugin;
