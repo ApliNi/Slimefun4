@@ -42,7 +42,7 @@ jobs:
           path: staging
       - name: Automatic Releases
         uses: marvinpinto/action-automatic-releases@v1.2.1
-        if: github.event_name != 'pull_request' && github.ref_name == 'master'
+        if: github.event_name != 'pull_request' && github.ref_name == 'new'
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "exp"
