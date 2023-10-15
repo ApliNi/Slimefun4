@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
  * This class holds the implementations of every {@link SubCommand}.
  * The implementations themselves are package-private, this class only provides
  * a static setup method
- * 
+ *
  * @author TheBusyBiscuit
  *
  */
@@ -45,7 +45,8 @@ public final class SlimefunSubCommands {
         commands.add(new ReloadCommand(plugin, cmd));
         commands.add(new MigrateCommand(plugin, cmd));
         commands.add(new BlockDataCommand(plugin, cmd));
-
+        commands.add(new BanItemCommand(plugin, cmd));
+        commands.add(new UnbanItemCommand(plugin, cmd));
         return commands;
     }
 }

@@ -1,6 +1,5 @@
 package io.github.thebusybiscuit.slimefun4.implementation.listeners;
 
-import city.norain.slimefun4.holder.SlimefunBackpackHolder;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.InvStorageUtils;
 import io.github.bakedlibs.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -10,18 +9,14 @@ import io.github.thebusybiscuit.slimefun4.core.services.sounds.SoundEffect;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.items.backpacks.Cooler;
 import io.github.thebusybiscuit.slimefun4.implementation.items.backpacks.SlimefunBackpack;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,14 +31,14 @@ import org.bukkit.inventory.ItemStack;
 /**
  * This {@link Listener} is responsible for all events centered around a {@link SlimefunBackpack}.
  * This also includes the {@link Cooler}
- * 
+ *
  * @author TheBusyBiscuit
  * @author Walshy
  * @author NihilistBrew
  * @author AtomicScience
  * @author VoidAngel
  * @author John000708
- * 
+ *
  * @see SlimefunBackpack
  * @see PlayerBackpack
  *
@@ -61,9 +56,9 @@ public class BackpackListener implements Listener {
     public void onClose(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
 
-        if (e.getInventory().getHolder() instanceof SlimefunBackpackHolder holder) {
+        if (e.getInventory().getHolder() instanceof PlayerBackpack backpack) {
             backpacks.remove(p.getUniqueId());
-            saveBackpackInv(holder.getBackpack());
+            saveBackpackInv(backpack);
             SoundEffect.BACKPACK_CLOSE_SOUND.playFor(p);
         }
     }
@@ -74,7 +69,8 @@ public class BackpackListener implements Listener {
             return;
         }
 
-        var changed = InvStorageUtils.getChangedSlots(snapshot, bp.getInventory().getContents());
+        var changed =
+                InvStorageUtils.getChangedSlots(snapshot, bp.getInventory().getContents());
         if (changed.isEmpty()) {
             return;
         }
@@ -142,7 +138,8 @@ public class BackpackListener implements Listener {
     @ParametersAreNonnullByDefault
     public void openBackpack(Player p, ItemStack item, SlimefunBackpack backpack) {
         if (item.getAmount() == 1) {
-            if (backpack.canUse(p, true) && !PlayerProfile.get(p, profile -> openBackpack(p, item, profile, backpack.getSize()))) {
+            if (backpack.canUse(p, true)
+                    && !PlayerProfile.get(p, profile -> openBackpack(p, item, profile, backpack.getSize()))) {
                 Slimefun.getLocalization().sendMessage(p, "messages.opening-backpack");
             }
         } else {
@@ -153,7 +150,8 @@ public class BackpackListener implements Listener {
     @ParametersAreNonnullByDefault
     private void openBackpack(Player p, ItemStack item, PlayerProfile profile, int size) {
         var meta = item.getItemMeta();
-        if (PlayerBackpack.getBackpackUUID(meta).isEmpty() && PlayerBackpack.getBackpackID(meta).isEmpty()) {
+        if (PlayerBackpack.getBackpackUUID(meta).isEmpty()
+                && PlayerBackpack.getBackpackID(meta).isEmpty()) {
             // Create backpack
             Slimefun.getLocalization().sendMessage(p, "backpack.set-name", true);
             Slimefun.getChatCatcher().scheduleCatcher(p.getUniqueId(), name -> {
@@ -164,13 +162,9 @@ public class BackpackListener implements Listener {
                 }
                 PlayerBackpack.bindItem(
                         item,
-                        Slimefun.getDatabaseManager().getProfileDataController().createBackpack(
-                                p,
-                                name,
-                                profile.nextBackpackNum(),
-                                size
-                        )
-                );
+                        Slimefun.getDatabaseManager()
+                                .getProfileDataController()
+                                .createBackpack(p, name, profile.nextBackpackNum(), size));
             });
         }
 
@@ -190,11 +184,13 @@ public class BackpackListener implements Listener {
                     item,
                     backpack -> {
                         backpacks.put(p.getUniqueId(), item);
-                        invSnapshot.put(backpack.getUniqueId(), InvStorageUtils.getInvSnapshot(backpack.getInventory().getContents()));
+                        invSnapshot.put(
+                                backpack.getUniqueId(),
+                                InvStorageUtils.getInvSnapshot(
+                                        backpack.getInventory().getContents()));
                         backpack.open(p);
                     },
-                    true
-            );
+                    true);
         } else {
             Slimefun.getLocalization().sendMessage(p, "backpack.already-open", true);
         }

@@ -1,5 +1,14 @@
 package me.mrCookieSlime.CSCoreLibPlugin.general.Inventory;
 
+import city.norain.slimefun4.holder.SlimefunInventoryHolder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArraySet;
+import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -7,28 +16,23 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * An old remnant of CS-CoreLib.
  * This will be removed once we updated everything.
  * Don't look at the code, it will be gone soon, don't worry.
  */
 @Deprecated
-public class ChestMenu {
+public class ChestMenu extends SlimefunInventoryHolder {
 
     private boolean clickable;
     private boolean emptyClickable;
     private String title;
-    private Inventory inv;
     private List<ItemStack> items;
     private Map<Integer, MenuClickHandler> handlers;
     private MenuOpeningHandler open;
     private MenuCloseHandler close;
     private MenuClickHandler playerclick;
+    private final Set<UUID> viewers = new CopyOnWriteArraySet<>();
 
     /**
      * Creates a new ChestMenu with the specified
@@ -43,10 +47,8 @@ public class ChestMenu {
         this.items = new ArrayList<>();
         this.handlers = new HashMap<>();
 
-        this.open = p -> {
-        };
-        this.close = p -> {
-        };
+        this.open = p -> {};
+        this.close = p -> {};
         this.playerclick = (p, slot, item, action) -> isPlayerInventoryClickable();
     }
 
@@ -115,8 +117,7 @@ public class ChestMenu {
      */
     public ChestMenu addItem(int slot, ItemStack item) {
         final int size = this.items.size();
-        if (size > slot)
-            this.items.set(slot, item);
+        if (size > slot) this.items.set(slot, item);
         else {
             for (int i = 0; i < slot - size; i++) {
                 this.items.add(null);
@@ -149,7 +150,7 @@ public class ChestMenu {
      */
     public ItemStack getItemInSlot(int slot) {
         setup();
-        return this.inv.getItem(slot);
+        return this.inventory.getItem(slot);
     }
 
     /**
@@ -207,15 +208,26 @@ public class ChestMenu {
      */
     public ItemStack[] getContents() {
         setup();
-        return this.inv.getContents();
+        return this.inventory.getContents();
+    }
+
+    public void addViewer(@Nonnull UUID uuid) {
+        viewers.add(uuid);
+    }
+
+    public void removeViewer(@Nonnull UUID uuid) {
+        viewers.remove(uuid);
+    }
+
+    public boolean contains(@Nonnull Player viewer) {
+        return viewers.contains(viewer.getUniqueId());
     }
 
     private void setup() {
-        if (this.inv != null)
-            return;
-        this.inv = Bukkit.createInventory(null, ((int) Math.ceil(this.items.size() / 9F)) * 9, title);
+        if (this.inventory != null) return;
+        this.inventory = Bukkit.createInventory(this, ((int) Math.ceil(this.items.size() / 9F)) * 9, title);
         for (int i = 0; i < this.items.size(); i++) {
-            this.inv.setItem(i, this.items.get(i));
+            this.inventory.setItem(i, this.items.get(i));
         }
     }
 
@@ -223,12 +235,10 @@ public class ChestMenu {
      * Resets this ChestMenu to a Point BEFORE the User interacted with it
      */
     public void reset(boolean update) {
-        if (update)
-            this.inv.clear();
-        else
-            this.inv = Bukkit.createInventory(null, ((int) Math.ceil(this.items.size() / 9F)) * 9, title);
+        if (update) this.inventory.clear();
+        else this.inventory = Bukkit.createInventory(this, ((int) Math.ceil(this.items.size() / 9F)) * 9, title);
         for (int i = 0; i < this.items.size(); i++) {
-            this.inv.setItem(i, this.items.get(i));
+            this.inventory.setItem(i, this.items.get(i));
         }
     }
 
@@ -240,7 +250,7 @@ public class ChestMenu {
      */
     public void replaceExistingItem(int slot, ItemStack item) {
         setup();
-        this.inv.setItem(slot, item);
+        this.inventory.setItem(slot, item);
     }
 
     /**
@@ -251,10 +261,9 @@ public class ChestMenu {
     public void open(Player... players) {
         setup();
         for (Player p : players) {
-            p.openInventory(this.inv);
-            MenuListener.menus.put(p.getUniqueId(), this);
-            if (open != null)
-                open.onOpen(p);
+            p.openInventory(this.inventory);
+            addViewer(p.getUniqueId());
+            if (open != null) open.onOpen(p);
         }
     }
 
@@ -303,7 +312,7 @@ public class ChestMenu {
      * @return The converted Inventory
      */
     public Inventory toInventory() {
-        return this.inv;
+        return this.inventory;
     }
 
     @FunctionalInterface
