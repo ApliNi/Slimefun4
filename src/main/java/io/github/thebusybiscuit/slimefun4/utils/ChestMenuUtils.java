@@ -22,8 +22,10 @@ public final class ChestMenuUtils {
 
     private ChestMenuUtils() {}
 
+    // 背景 GRAY_STAINED_GLASS_PANE -> LIME_STAINED_GLASS_PANE
     private static final ItemStack UI_BACKGROUND =
-            new SlimefunItemStack("_UI_BACKGROUND", Material.GRAY_STAINED_GLASS_PANE, " ");
+            new SlimefunItemStack("_UI_BACKGROUND", Material.LIME_STAINED_GLASS_PANE, " ");
+
     private static final ItemStack INPUT_SLOT =
             new SlimefunItemStack("_UI_INPUT_SLOT", Material.CYAN_STAINED_GLASS_PANE, " ");
     private static final ItemStack OUTPUT_SLOT =
@@ -42,14 +44,17 @@ public final class ChestMenuUtils {
     private static final ItemStack WIKI_BUTTON =
             new SlimefunItemStack("_UI_WIKI", Material.KNOWLEDGE_BOOK, "&3Slimefun Wiki");
 
+    // 按钮处于可用状态 LIME_STAINED_GLASS_PANE -> LIGHT_BLUE_STAINED_GLASS_PANE
     private static final ItemStack PREV_BUTTON_ACTIVE =
-            new SlimefunItemStack("_UI_PREVIOUS_ACTIVE", Material.LIME_STAINED_GLASS_PANE, "&r\u21E6 Previous Page");
+            new SlimefunItemStack("_UI_PREVIOUS_ACTIVE", Material.LIGHT_BLUE_STAINED_GLASS_PANE, "&r\u21E6 Previous Page");
     private static final ItemStack NEXT_BUTTON_ACTIVE =
-            new SlimefunItemStack("_UI_NEXT_ACTIVE", Material.LIME_STAINED_GLASS_PANE, "&rNext Page \u21E8");
+            new SlimefunItemStack("_UI_NEXT_ACTIVE", Material.LIGHT_BLUE_STAINED_GLASS_PANE, "&rNext Page \u21E8");
+
+    // 翻页按钮 BLACK_STAINED_GLASS_PANE -> LIME_STAINED_GLASS_PANE
     private static final ItemStack PREV_BUTTON_INACTIVE =
-            new SlimefunItemStack("_UI_PREVIOUS_INACTIVE", Material.BLACK_STAINED_GLASS_PANE, "&8\u21E6 Previous Page");
+            new SlimefunItemStack("_UI_PREVIOUS_INACTIVE", Material.LIME_STAINED_GLASS_PANE, "&8\u21E6 Previous Page");
     private static final ItemStack NEXT_BUTTON_INACTIVE =
-            new SlimefunItemStack("_UI_NEXT_INACTIVE", Material.BLACK_STAINED_GLASS_PANE, "&8Next Page \u21E8");
+            new SlimefunItemStack("_UI_NEXT_INACTIVE", Material.LIME_STAINED_GLASS_PANE, "&8Next Page \u21E8");
 
     private static final MenuClickHandler CLICK_HANDLER = (p, s, i, a) -> false;
 
