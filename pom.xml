@@ -115,6 +115,13 @@
                     </excludes>
                     <source>16</source>
                     <target>16</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.30</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
@@ -194,7 +201,7 @@
             <plugin>
                 <groupId>com.rudikershaw.gitbuildhook</groupId>
                 <artifactId>git-build-hook-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.4.1</version>
                 <configuration>
                     <installHooks>
                         <pre-commit>.git-hooks/pre-commit</pre-commit>
@@ -263,11 +270,18 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Shaded packages -->
         <dependency>
             <groupId>com.github.StarWishsama.dough</groupId>
             <artifactId>dough-api</artifactId>
-            <version>65cfacbe4c</version>
+            <version>3133cafa80</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -293,7 +307,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>5.0.1</version>
+            <version>5.1.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -307,7 +321,7 @@
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-core</artifactId>
-            <version>7.2.15</version>
+            <version>7.2.17</version>
             <scope>provided</scope>
 
             <exclusions>
@@ -335,7 +349,7 @@
         <dependency>
             <groupId>com.gmail.nossr50.mcMMO</groupId>
             <artifactId>mcMMO</artifactId>
-            <version>2.1.223</version>
+            <version>2.1.225</version>
             <scope>provided</scope>
 
             <exclusions>
@@ -349,7 +363,7 @@
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.11.3</version>
+            <version>2.11.5</version>
             <scope>provided</scope>
 
             <exclusions>
@@ -448,13 +462,13 @@
         <dependency>
             <groupId>net.guizhanss</groupId>
             <artifactId>GuizhanLib-common</artifactId>
-            <version>1.4.0</version>
+            <version>1.6.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.guizhanss</groupId>
             <artifactId>GuizhanLib-updater</artifactId>
-            <version>1.4.0</version>
+            <version>1.6.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
