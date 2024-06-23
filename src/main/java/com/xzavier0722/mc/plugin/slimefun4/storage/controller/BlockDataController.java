@@ -178,10 +178,12 @@ public class BlockDataController extends ADataController {
     public void removeBlock(Location l) {
         checkDestroy();
 
-        Slimefun.getNetworkManager().updateAllNetworks(l);
-
         var removed = getChunkDataCache(l.getChunk(), true).removeBlockData(l);
         if (removed == null) {
+            return;
+        }
+
+        if (!removed.isDataLoaded()) {
             return;
         }
 
@@ -278,7 +280,7 @@ public class BlockDataController extends ADataController {
 
         var hasTicker = false;
 
-        if (Slimefun.getRegistry().getTickerBlocks().contains(blockData.getSfId())) {
+        if (blockData.isDataLoaded() && Slimefun.getRegistry().getTickerBlocks().contains(blockData.getSfId())) {
             Slimefun.getTickerTask().disableTicker(blockData.getLocation());
             hasTicker = true;
         }
@@ -373,12 +375,7 @@ public class BlockDataController extends ADataController {
             chunkData.addBlockCacheInternal(blockData, false);
 
             if (sfItem.loadDataByDefault()) {
-                scheduleReadTask(() -> {
-                    loadBlockData(blockData);
-                    if (sfItem.isTicking()) {
-                        Slimefun.getTickerTask().enableTicker(blockData.getLocation());
-                    }
-                });
+                scheduleReadTask(() -> loadBlockData(blockData));
             }
         });
         Bukkit.getPluginManager().callEvent(new SlimefunChunkDataLoadEvent(chunkData));
@@ -418,7 +415,6 @@ public class BlockDataController extends ADataController {
             if (chunkData.isDataLoaded()) {
                 return;
             }
-
             getData(key)
                     .forEach(data -> chunkData.setCacheInternal(
                             data.get(FieldKey.DATA_KEY),
@@ -469,6 +465,11 @@ public class BlockDataController extends ADataController {
                 if (content != null) {
                     invSnapshots.put(blockData.getKey(), InvStorageUtils.getInvSnapshot(content));
                 }
+            }
+
+            var sfItem = SlimefunItem.getById(blockData.getSfId());
+            if (sfItem != null && sfItem.isTicking()) {
+                Slimefun.getTickerTask().enableTicker(blockData.getLocation());
             }
         } finally {
             lock.unlock(key);
@@ -530,11 +531,84 @@ public class BlockDataController extends ADataController {
             return;
         }
 
-        changed.forEach(slot -> scheduleDelayedBlockInvUpdate(blockData, slot));
+        changed.forEach(slot -> saveBlockInventorySlot(blockData, slot));
+    }
+
+    public void saveBlockInventorySlot(SlimefunBlockData blockData, int slot) {
+        scheduleDelayedBlockInvUpdate(blockData, slot);
     }
 
     public Set<SlimefunChunkData> getAllLoadedChunkData() {
         return new HashSet<>(loadedChunk.values());
+    }
+
+    public void removeAllDataInChunk(Chunk chunk) {
+        var cKey = LocationUtils.getChunkKey(chunk);
+        var cache = loadedChunk.remove(cKey);
+
+        if (cache != null && cache.isDataLoaded()) {
+            cache.getAllBlockData().forEach(this::clearBlockCacheAndTasks);
+        }
+        deleteChunkAndBlockDataDirectly(cKey);
+    }
+
+    public void removeAllDataInChunkAsync(Chunk chunk, Runnable onFinishedCallback) {
+        scheduleWriteTask(() -> {
+            removeAllDataInChunk(chunk);
+            onFinishedCallback.run();
+        });
+    }
+
+    public void removeAllDataInWorld(World world) {
+        // 1. remove block cache
+        var loadedBlockData = new HashSet<SlimefunBlockData>();
+        for (var chunkData : getAllLoadedChunkData(world)) {
+            loadedBlockData.addAll(chunkData.getAllBlockData());
+            chunkData.removeAllCacheInternal();
+        }
+
+        // 2. remove ticker and delayed tasks
+        loadedBlockData.forEach(this::clearBlockCacheAndTasks);
+
+        // 3. remove from database
+        var prefix = world.getName() + ";";
+        deleteChunkAndBlockDataDirectly(prefix + "%");
+
+        // 4. remove chunk cache
+        loadedChunk.entrySet().removeIf(entry -> entry.getKey().startsWith(prefix));
+    }
+
+    public void removeAllDataInWorldAsync(World world, Runnable onFinishedCallback) {
+        scheduleWriteTask(() -> {
+            removeAllDataInWorld(world);
+            onFinishedCallback.run();
+        });
+    }
+
+    public Set<SlimefunChunkData> getAllLoadedChunkData(World world) {
+        var prefix = world.getName() + ";";
+        var re = new HashSet<SlimefunChunkData>();
+        loadedChunk.forEach((k, v) -> {
+            if (k.startsWith(prefix)) {
+                re.add(v);
+            }
+        });
+        return re;
+    }
+
+    public void removeFromAllChunkInWorld(World world, String key) {
+        var req = new RecordKey(DataScope.CHUNK_DATA);
+        req.addCondition(FieldKey.CHUNK, world.getName() + ";%");
+        req.addCondition(FieldKey.DATA_KEY, key);
+        deleteData(req);
+        getAllLoadedChunkData(world).forEach(data -> data.removeData(key));
+    }
+
+    public void removeFromAllChunkInWorldAsync(World world, String key, Runnable onFinishedCallback) {
+        scheduleWriteTask(() -> {
+            removeFromAllChunkInWorld(world, key);
+            onFinishedCallback.run();
+        });
     }
 
     private void scheduleDelayedBlockInvUpdate(SlimefunBlockData blockData, int slot) {
@@ -670,5 +744,27 @@ public class BlockDataController extends ADataController {
                     return re;
                 })
                 : loadedChunk.get(LocationUtils.getChunkKey(chunk));
+    }
+
+    private void deleteChunkAndBlockDataDirectly(String cKey) {
+        var req = new RecordKey(DataScope.BLOCK_RECORD);
+        req.addCondition(FieldKey.CHUNK, cKey);
+        deleteData(req);
+
+        req = new RecordKey(DataScope.CHUNK_DATA);
+        req.addCondition(FieldKey.CHUNK, cKey);
+        deleteData(req);
+    }
+
+    private void clearBlockCacheAndTasks(SlimefunBlockData blockData) {
+        var l = blockData.getLocation();
+        if (blockData.isDataLoaded() && Slimefun.getRegistry().getTickerBlocks().contains(blockData.getSfId())) {
+            Slimefun.getTickerTask().disableTicker(l);
+        }
+        Slimefun.getNetworkManager().updateAllNetworks(l);
+
+        var scopeKey = new LocationKey(DataScope.NONE, l);
+        removeDelayedBlockDataUpdates(scopeKey);
+        abortScopeTask(scopeKey);
     }
 }
