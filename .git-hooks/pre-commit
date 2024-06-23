@@ -2,16 +2,36 @@
 
 echo "[pre-commit check]"
 
-if ! [ -x "$(command -v mvn)" ]; then
-  echo -e 'Maven are not installed!'
-  echo
-  echo 'Please visit following site to download latest maven:'
-  echo
-  echo "  https://maven.apache.org/download.cgi"
-  echo
-  echo 'If you are sure that you have installed maven,'
-  echo 'Please check whether your environment variables is being set properly.'
+spotless() {
+  if [ ! -e "./mvnw" ]; then
+    return 0
+  fi
+
+  local CHANGED_FILES="$(git --no-pager diff --name-status --no-color --cached | awk '$1 != "D" && $NF ~ /\.java?$/ { print $NF }')"
+
+  if [ -z "$CHANGED_FILES" ]; then
+    echo "No staged files."
+    return 0
+  fi
+
+  echo '[pre-commit] Executing spotlessCheck before commit'
+
+  git stash --quiet --keep-index
+
+  ./mvnw spotless:check -B
+
+  local RESULT=$?
+
+  git stash pop -q
+
+  if [ "$RESULT" -ne "0" ]; then
+    echo -e "spotless check failed..."
+    echo -e 'You can try "./mvnw spotless:apply" to apply auto-fixes.'
+  fi
+
+  return $RESULT
+}
+
+if ! spotless; then
   exit 1
 fi
-
-mvn spotless:apply
